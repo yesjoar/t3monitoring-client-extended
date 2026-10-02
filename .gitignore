@@ -1,0 +1,6 @@
+/.Build/
+/.php-cs-fixer.cache
+/composer.lock
+/var/
+.DS_Store
+.idea/

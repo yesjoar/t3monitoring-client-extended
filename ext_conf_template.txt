@@ -1,0 +1,44 @@
+# cat=Scheduler; type=boolean; label=Report the scheduler:Last run of the scheduler, failed, overdue and stuck tasks.
+scheduler.enabled = 1
+
+# cat=Scheduler; type=int+; label=Warn if the scheduler did not run for (minutes):The scheduler cron job usually runs every few minutes.
+scheduler.lastRunWarningMinutes = 60
+
+# cat=Scheduler; type=int+; label=Report an error if the scheduler did not run for (minutes)
+scheduler.lastRunErrorMinutes = 360
+
+# cat=Scheduler; type=int+; label=Task is overdue after (minutes):Enabled tasks whose planned execution is older than this are reported.
+scheduler.overdueMinutes = 60
+
+# cat=Scheduler; type=int+; label=Task is stuck after (minutes):Tasks marked as running for longer than this are reported.
+scheduler.stuckMinutes = 240
+
+# cat=System log; type=boolean; label=Report errors of the system log (sys_log)
+sysLog.enabled = 1
+
+# cat=System log; type=int+; label=Period (hours):Only entries of the last hours are evaluated.
+sysLog.periodHours = 24
+
+# cat=System log; type=int+; label=Number of different errors to report:Equal messages are grouped, the most frequent ones are reported.
+sysLog.maxGroups = 10
+
+# cat=System log; type=int+; label=Warn about failed backend logins from (count):0 disables the warning.
+sysLog.failedLoginsWarning = 50
+
+# cat=Log files; type=boolean; label=Report errors of the log files (var/log/typo3_*.log)
+logFiles.enabled = 1
+
+# cat=Log files; type=int+; label=Period (hours)
+logFiles.periodHours = 24
+
+# cat=Log files; type=int+; label=Number of different errors to report
+logFiles.maxGroups = 10
+
+# cat=Log files; type=options[Emergency=emergency,Alert=alert,Critical=critical,Error=error,Warning=warning]; label=Minimum log level
+logFiles.minimumLevel = error
+
+# cat=Log files; type=int+; label=Bytes read from the end of each log file:Limits the runtime on installations with large log files.
+logFiles.maxBytesPerFile = 1048576
+
+# cat=Log files; type=string; label=Message patterns to ignore:Comma separated list of text fragments. Entries of the system log and the log files containing one of them are skipped.
+ignoredMessages =

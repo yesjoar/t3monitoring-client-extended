@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # Weekly, to notice incompatibilities with new TYPO3 releases.
+    - cron: '23 5 * * 1'
+
+jobs:
+  tests:
+    name: TYPO3 ${{ matrix.typo3 }} / PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { typo3: '12.4', php: '8.2' }
+          - { typo3: '12.4', php: '8.4' }
+          - { typo3: '13.4', php: '8.2' }
+          - { typo3: '13.4', php: '8.4', quality: true }
+          - { typo3: '14.0', php: '8.2' }
+          - { typo3: '14.0', php: '8.5' }
+    env:
+      # The public releases of TYPO3 versions in ELTS are affected by security advisories,
+      # which Composer would refuse to install.
+      COMPOSER_NO_SECURITY_BLOCKING: 1
+      typo3DatabaseDriver: pdo_sqlite
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: intl, pdo_sqlite, zip
+          coverage: none
+
+      - name: Install dependencies
+        run: >
+          composer update --no-progress --no-interaction
+          --with "typo3/cms-core:^${{ matrix.typo3 }}"
+          --with "typo3/cms-scheduler:^${{ matrix.typo3 }}"
+
+      - name: Coding standards
+        if: ${{ matrix.quality }}
+        run: composer cs
+
+      - name: Static analysis
+        run: composer phpstan
+
+      - name: Unit tests
+        run: composer test:unit
+
+      - name: Functional tests
+        run: composer test:functional
