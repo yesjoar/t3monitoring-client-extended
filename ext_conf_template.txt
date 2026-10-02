@@ -40,5 +40,8 @@ logFiles.minimumLevel = error
 # cat=Log files; type=int+; label=Bytes read from the end of each log file:Limits the runtime on installations with large log files.
 logFiles.maxBytesPerFile = 1048576
 
+# cat=Composer; type=boolean; label=Report the version constraints of composer.json:Package names and version constraints of the root composer.json, so the monitoring can suggest the matching "composer require" command. No repositories or credentials are read.
+composer.enabled = 1
+
 # cat=Log files; type=string; label=Message patterns to ignore:Comma separated list of text fragments. Entries of the system log and the log files containing one of them are skipped.
 ignoredMessages =

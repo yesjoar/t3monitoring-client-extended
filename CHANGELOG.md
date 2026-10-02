@@ -5,6 +5,16 @@ All notable changes to this extension are documented in this file. The format is
 
 ## [Unreleased]
 
+## [0.2.0]
+
+### Added
+
+- Composer provider: package names and version constraints of the root `composer.json` (`extended.composer`),
+  so a monitoring server can tell whether an update needs a changed constraint. Enabled by default,
+  disable it with `composer.enabled = 0`.
+
+## [0.1.0]
+
 ### Added
 
 - Scheduler provider: last run of the scheduler, failed, overdue and stuck tasks.

@@ -9,6 +9,7 @@ use T3Monitor\T3monitoringClient\Client;
 use T3Monitor\T3monitoringClient\Provider\DataProviderInterface;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Http\ServerRequest;
+use Yesjoar\T3monitoringClientExtended\Provider\ComposerProvider;
 use Yesjoar\T3monitoringClientExtended\Provider\LogFileProvider;
 use Yesjoar\T3monitoringClientExtended\Provider\SchedulerProvider;
 use Yesjoar\T3monitoringClientExtended\Provider\SystemLogProvider;
@@ -18,7 +19,7 @@ use Yesjoar\T3monitoringClientExtended\Provider\SystemLogProvider;
  */
 final class EndpointTest extends AbstractProviderTestCase
 {
-    private const OWN_PROVIDERS = [SchedulerProvider::class, SystemLogProvider::class, LogFileProvider::class];
+    private const OWN_PROVIDERS = [SchedulerProvider::class, SystemLogProvider::class, LogFileProvider::class, ComposerProvider::class];
 
     protected array $configurationToUseInTestInstance = [
         'EXTENSIONS' => [
@@ -79,6 +80,8 @@ final class EndpointTest extends AbstractProviderTestCase
         self::assertSame('Unable to call method "getQueryParams"', $data['extended']['logFiles']['groups'][0]['message']);
         self::assertSame('TYPO3.CMS.Frontend', $data['extended']['logFiles']['groups'][0]['component']);
         self::assertArrayHasKey('Log files - 1 error(s) in the last 24 hours', $data['extra']['warning']);
+        // The functional test instance does not run in Composer mode.
+        self::assertSame(['available' => false], $data['extended']['composer']);
     }
 
     #[Test]

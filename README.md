@@ -7,6 +7,8 @@ shows right away when something goes wrong inside a TYPO3 installation:
 - **Scheduler** – did the scheduler run recently? Which tasks failed, are overdue or stuck?
 - **System log** – errors of `sys_log` in the last hours, grouped by message, and the number of failed backend logins.
 - **Log files** – errors written to `var/log/typo3_*.log` (e.g. uncaught frontend exceptions that never show up in `sys_log`).
+- **Composer** – the version constraints of the root `composer.json`, so a monitoring server can tell whether an
+  available update only needs `composer update` or a changed constraint (`composer require`).
 
 | | |
 |---|---|
@@ -71,10 +73,18 @@ The result is delivered twice, so it is useful for the t3monitoring server as we
         { "level": "error", "component": "TYPO3.CMS.Frontend", "message": "…", "count": 14, "first": 1789990000, "last": 1789995000 }
       ],
       "truncated": false
+    },
+    "composer": {
+      "available": true,
+      "require": { "georgringer/news": "^12.3", "typo3/cms-core": "^13.4" },
+      "requireDev": { "typo3/testing-framework": "^9.0" }
     }
   }
 }
 ```
+
+`composer` is plain data without messages: package names (with a vendor) and their constraints. It is only
+evaluated by monitoring servers that know the available versions; `available` is `false` without Composer mode.
 
 All times are Unix timestamps. `scheduler.lastRunStatus` rates the last run by the configured thresholds:
 `ok`, `warning`, `error`, `never` (tasks are enabled, but the scheduler never ran) or `unused` (no enabled tasks). `version` is increased on incompatible changes of the format. If a provider
@@ -100,6 +110,7 @@ fails, the endpoint keeps working: the error is reported in `extended.errors.<pr
 | `logFiles.maxGroups` | 10 | Number of different errors that are reported |
 | `logFiles.minimumLevel` | error | Minimum PSR-3 level (`warning` … `emergency`) |
 | `logFiles.maxBytesPerFile` | 1048576 | Only the end of each log file is read |
+| `composer.enabled` | 1 | Report the version constraints of `composer.json` |
 | `ignoredMessages` | | Comma separated text fragments; matching entries are skipped |
 
 ## Privacy and security
@@ -110,6 +121,13 @@ The data leaves the installation, so it is reduced on purpose:
 - Query strings of URLs (which may contain secrets), email and IP addresses are removed from all messages.
 - Messages are limited to 300 characters; equal messages are grouped.
 - Scheduler tasks are never unserialized, so no code of task classes is executed.
+- Of `composer.json` only package names and version constraints are read – no repositories or credentials.
+
+Every provider can be disabled, also in `config/system/additional.php`:
+
+```php
+$GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['t3monitoring_client_extended']['composer']['enabled'] = '0';
+```
 
 The endpoint itself is protected by t3monitoring_client (secret and allowed IPs).
 
